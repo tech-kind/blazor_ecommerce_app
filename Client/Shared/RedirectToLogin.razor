@@ -1,0 +1,10 @@
+﻿@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        // returnUrlで指定するのは、ユーザがアクセスしていたページ
+        // ログインが正常にできたら、ログインしようとしていた認証が必要なページが表示される
+        Navigation.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+    }
+}
