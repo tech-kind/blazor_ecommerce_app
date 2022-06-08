@@ -8,12 +8,28 @@
 <AuthorizeView>
     @*Authorizedタグは認証済み*@
     <Authorized>
-        Hello, @context.User.Identity?.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogout">Log out</button>
+        <div class="d-flex align-items-center" style="color: white;">
+            @(context.User.Identity?.Name)さん
+        </div>
+        <div class="dropdown">
+            <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-icon" style="width: 40px;">
+                    <span class="oi oi-person"></span>
+                </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                <li><a class="dropdown-item" href="profile">プロフィール</a></li>
+                <li><a class="dropdown-item" href="orders">注文履歴</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" @onclick="BeginLogout">ログアウト</a></li>
+            </ul>
+        </div>
     </Authorized>
     @*NotAuthorizedタグは認証されていない場合*@
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <div class="d-flex align-items-center">
+            <a href="authentication/login" style="color: white; text-decoration: none;">ログイン</a>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
