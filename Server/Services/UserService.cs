@@ -9,6 +9,7 @@ namespace BlazorECommerceApp.Server.Services
     public interface IUserService
     {
         ValueTask<ShopUser> GetAsync(string userId);
+        ValueTask<int> PutAsync(ShopUser shopUser, string userId);
     }
 
     public class UserService : IUserService
@@ -35,6 +36,19 @@ namespace BlazorECommerceApp.Server.Services
         {
             var user = await _graphClient.Users[userId].Request().GetAsync();
             return user.ToShopUser();
+        }
+
+        public async ValueTask<int> PutAsync(ShopUser shopUser, string userId)
+        {
+            var user = new User
+            {
+                DisplayName = shopUser.DisplayName,
+                MobilePhone = shopUser.MobilePhone
+            };
+
+            await _graphClient.Users[userId].Request().UpdateAsync(user);
+
+            return StatusCodes.Status204NoContent;
         }
     }
 }

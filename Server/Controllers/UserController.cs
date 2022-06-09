@@ -24,6 +24,13 @@ namespace BlazorECommerceApp.Server.Controllers
             return Ok(shopUser);
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult> Put(ShopUser shopUser)
+        {
+            await _userService.PutAsync(shopUser, GetUserId());
+            return NoContent();
+        }
+
         private string GetUserId()
             => User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
     }
