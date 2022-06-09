@@ -15,6 +15,7 @@ builder.Services.AddDbContextFactory<DataContext>(options =>
 });
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
 // Azure AD B2C‚É‚æ‚é”FØ‚ğ’Ç‰Á‚µ‚Ä‚¢‚é

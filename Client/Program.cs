@@ -18,6 +18,7 @@ builder.Services.AddHttpClient<PublicHttpClient>("BlazorECommerceApp.AnonymousAP
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorECommerceApp.ServerAPI"));
 
 builder.Services.AddScoped<IPublicProductService, PublicProductService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Azure AD B2C‚ðŽg‚¤Ý’è‚ðs‚¤
 builder.Services.AddMsalAuthentication(options =>
