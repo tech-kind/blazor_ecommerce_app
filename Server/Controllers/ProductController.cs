@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Mime;
 using BlazorECommerceApp.Server.Services;
 using BlazorECommerceApp.Shared.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,8 @@ namespace BlazorECommerceApp.Server.Controllers
         }
 
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async ValueTask<ActionResult<List<Product>>> GetAll()
             => Ok(await _productService.GetAllAsync());
     }

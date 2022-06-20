@@ -6,24 +6,19 @@ using Microsoft.Identity.Web;
 using BlazorECommerceApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using BlazorECommerceApp.Server.Services;
+using BlazorECommerceApp.Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContextFactory<DataContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-// Add services to the container.
-// Azure AD B2C‚É‚æ‚é”FØ‚ð’Ç‰Á‚µ‚Ä‚¢‚é
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddServices();
+builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Swagger
+builder.Services.AddSwagger(builder.Configuration);
 
 var app = builder.Build();
 
@@ -31,6 +26,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+
+    // Swagger
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.OAuthClientId(builder.Configuration["Swagger:ClientId"]);
+        options.OAuthUsePkce();
+    });
 }
 else
 {
