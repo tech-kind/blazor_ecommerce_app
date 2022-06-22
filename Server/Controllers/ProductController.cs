@@ -19,6 +19,16 @@ namespace BlazorECommerceApp.Server.Controllers
             _productService = productService;
         }
 
+        [HttpGet("{id}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async ValueTask<ActionResult<Product>> Get(int id)
+        {
+            var product = await _productService.GetAsync(id);
+            return Ok(product);
+        }
+
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]

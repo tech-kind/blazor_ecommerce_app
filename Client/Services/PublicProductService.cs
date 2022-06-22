@@ -8,6 +8,7 @@ namespace BlazorECommerceApp.Client.Services
     public interface IPublicProductService
     {
         ValueTask<List<Product>> GetAllAsync();
+        ValueTask<Product> GetAsync(int id);
     }
 
     public class PublicProductService : IPublicProductService
@@ -21,6 +22,12 @@ namespace BlazorECommerceApp.Client.Services
         {
             var response = await _httpClient.GetAsync("api/product");
             return await response.Content.ReadFromJsonAsync<List<Product>>();
+        }
+
+        public async ValueTask<Product> GetAsync(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/product/{id}");
+            return await response.Content.ReadFromJsonAsync<Product>();
         }
     }
 }

@@ -8,6 +8,7 @@ namespace BlazorECommerceApp.Server.Services
     public interface IProductService
     {
         ValueTask<List<Product>> GetAllAsync();
+        ValueTask<Product> GetAsync(int id);
     }
 
     public class ProductService : IProductService
@@ -23,6 +24,14 @@ namespace BlazorECommerceApp.Server.Services
             using(_context)
             {
                 return await _context.Products.ToListAsync();
+            }
+        }
+
+        public async ValueTask<Product> GetAsync(int id)
+        {
+            using(_context)
+            {
+                return await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             }
         }
     }
