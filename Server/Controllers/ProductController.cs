@@ -26,6 +26,11 @@ namespace BlazorECommerceApp.Server.Controllers
         public async ValueTask<ActionResult<Product>> Get(int id)
         {
             var product = await _productService.GetAsync(id);
+            if (product is null)
+            {
+                return NotFound("商品が見つかりませんでした。");
+            }
+
             return Ok(product);
         }
 
