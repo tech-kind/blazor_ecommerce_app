@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorECommerceApp.Client;
 using BlazorECommerceApp.Client.Services;
 using BlazorECommerceApp.Client.Util;
+using Blazored.LocalStorage;
+using BlazorECommerceApp.Client.State;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,6 +21,8 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 
 builder.Services.AddScoped<IPublicProductService, PublicProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartState, CartState>();
 
 // Azure AD B2Cを使う設定を行う
 builder.Services.AddMsalAuthentication(options =>
@@ -29,5 +33,7 @@ builder.Services.AddMsalAuthentication(options =>
     // リダイレクトにログイン画面を表示させたい場合は、下記を有効にする。
     // options.ProviderOptions.LoginMode = "redirect";
 });
+
+builder.Services.AddBlazoredLocalStorage();
 
 await builder.Build().RunAsync();

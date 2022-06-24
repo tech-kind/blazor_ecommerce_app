@@ -1,5 +1,6 @@
 ﻿@page "/products/{id:int}"
 @inject IPublicProductService PublicProductService
+@inject ICartService CartService
 
 <PageTitle>商品詳細 - @_product?.Title</PageTitle>
 
@@ -22,6 +23,10 @@ else
                 <div class="card-body">
                     <h4 class="card-title text-danger">￥@_product.UnitPrice.ToString("#,0")</h4>
                     <h6 class="card-subtitle mb-2 text-muted">本商品はダウンロードコンテンツです。</h6>
+                    <SelectQuantity Model="@_cart" CartUpdateType="CartUpdateType.Add"></SelectQuantity>
+                    <div class="d-grid gap-2 mx-auto mt-3">
+                        <button class="btn btn-warning" @onclick="AddToCart">カートに入れる</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,9 +38,16 @@ else
     public int Id { get; set; }
 
     private Product _product;
+    private Cart _cart;
 
     protected override async Task OnInitializedAsync()
     {
         _product = await PublicProductService.GetAsync(Id);
+        _cart = new Cart() { Quantity = 1, Product = _product };
+    }
+
+    private async void AddToCart()
+    {
+        await CartService.AddAsync(_cart.ToCartStorage());
     }
 }
