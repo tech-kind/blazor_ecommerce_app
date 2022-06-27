@@ -9,6 +9,7 @@ namespace BlazorECommerceApp.Server.Services
     {
         ValueTask<List<Product>> GetAllAsync();
         ValueTask<Product> GetAsync(int id);
+        ValueTask<List<Product>> FilterAllByIdsAsync(int[] ids);
     }
 
     public class ProductService : IProductService
@@ -32,6 +33,14 @@ namespace BlazorECommerceApp.Server.Services
             using(_context)
             {
                 return await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            }
+        }
+
+        public async ValueTask<List<Product>> FilterAllByIdsAsync(int[] ids)
+        {
+            using (_context)
+            {
+                return await _context.Products.Where(x => ids.Contains(x.Id)).ToListAsync();
             }
         }
     }

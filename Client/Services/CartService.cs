@@ -8,6 +8,7 @@ namespace BlazorECommerceApp.Client.Services
     public interface ICartService
     {
         ValueTask AddAsync(CartStorage cartStorage);
+        ValueTask<List<Cart>> GetAllAsync();
     }
 
     public class CartService : ICartService
@@ -54,6 +55,23 @@ namespace BlazorECommerceApp.Client.Services
         public async ValueTask AddAsync(CartStorage cart)
         {
             await UpdateCartStorage(cart, CartStorageType.Add);
+        }
+
+        public async ValueTask<List<Cart>> GetAllAsync()
+        {
+            var storages = await _storageService.GetItemAsync<List<CartStorage>>(CART);
+            if (storages is null)
+            {
+                return new List<Cart>();
+            }
+
+            var products = await _publishProductService.FilterAllByIdsAsync(storages.Select(x => x.ProductId).ToArray());
+
+            return products.Select(p => new Cart
+            {
+                Quantity = storages.FirstOrDefault(s => s.ProductId == p.Id).Quantity,
+                Product = p
+            }).ToList();
         }
     }
 }

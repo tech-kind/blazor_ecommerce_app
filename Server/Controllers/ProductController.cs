@@ -39,5 +39,11 @@ namespace BlazorECommerceApp.Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async ValueTask<ActionResult<List<Product>>> GetAll()
             => Ok(await _productService.GetAllAsync());
+
+        [HttpGet("filter/ids")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async ValueTask<ActionResult<List<Product>>> FilterAllByIds([FromQuery] int[] ids)
+            => Ok(await _productService.FilterAllByIdsAsync(ids));
     }
 }

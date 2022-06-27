@@ -10,6 +10,7 @@ namespace BlazorECommerceApp.Client.Services
     {
         ValueTask<List<Product>> GetAllAsync();
         ValueTask<Product> GetAsync(int id);
+        ValueTask<List<Product>> FilterAllByIdsAsync(int[] ids);
     }
 
     public class PublicProductService : IPublicProductService
@@ -33,6 +34,20 @@ namespace BlazorECommerceApp.Client.Services
             await response.HandleError();
 
             return await response.Content.ReadFromJsonAsync<Product>();
+        }
+
+        public async ValueTask<List<Product>> FilterAllByIdsAsync(int[] ids)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            foreach (var id in ids)
+            {
+                query.Add("ids", id.ToString());
+            }
+
+            var response = await _httpClient.GetAsync($"api/product/filter/ids?{query}");
+            await response.HandleError();
+
+            return await response.Content.ReadFromJsonAsync<List<Product>>();
         }
     }
 }
