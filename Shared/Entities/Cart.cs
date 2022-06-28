@@ -12,6 +12,11 @@ namespace BlazorECommerceApp.Shared.Entities
 
         public Product Product { get; set; } = new ();
 
+        public decimal CalcAmount()
+        {
+            return Math.Round(Quantity * Product.UnitPrice, MidpointRounding.AwayFromZero);
+        }
+
         public CartStorage ToCartStorage()
         {
             return new CartStorage()
