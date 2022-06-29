@@ -80,7 +80,9 @@ else
 
     private async Task RemoveCart(Cart cart)
     {
-
+        await CartService.RemoveAsync(cart.Product.Id);
+        carts = await CartService.GetAllAsync();
+        StateHasChanged();
     }
 
     private async Task GoToPayment()

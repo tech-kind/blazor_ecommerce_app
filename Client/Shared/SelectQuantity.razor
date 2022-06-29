@@ -28,6 +28,11 @@
     private async void OnQuantityChanged(int quantity, Cart cart)
     {
         Model.Quantity = quantity;
+        if (CartUpdateType is CartUpdateType.Update)
+        {
+            await CartService.UpdateAsync(cart.ToCartStorage());
+        }
+
         await QuantityChanged.InvokeAsync();
     }
 }

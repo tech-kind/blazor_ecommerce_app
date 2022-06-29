@@ -7,7 +7,9 @@ namespace BlazorECommerceApp.Client.Services
 {
     public interface ICartService
     {
+        ValueTask UpdateAsync(CartStorage cartStorage);
         ValueTask AddAsync(CartStorage cartStorage);
+        ValueTask RemoveAsync(int productId);
         ValueTask<List<Cart>> GetAllAsync();
     }
 
@@ -33,8 +35,11 @@ namespace BlazorECommerceApp.Client.Services
             var storage = storages.Find(x => x.ProductId == cart.ProductId);
             if (storage is null)
             {
-                storages.Add(cart);
-                await _storageService.SetItemAsync(CART, storages);
+                if (type is not CartStorageType.Remove)
+                {
+                    storages.Add(cart);
+                    await _storageService.SetItemAsync(CART, storages);
+                }
                 await _cartState.UpdateAsync();
                 return;
             }
@@ -43,6 +48,12 @@ namespace BlazorECommerceApp.Client.Services
             {
                 case CartStorageType.Add:
                     storage.Quantity += cart.Quantity;
+                    break;
+                case CartStorageType.Update:
+                    storage.Quantity = cart.Quantity;
+                    break;
+                case CartStorageType.Remove:
+                    storages.Remove(storage);
                     break;
                 default:
                     break;
@@ -55,6 +66,16 @@ namespace BlazorECommerceApp.Client.Services
         public async ValueTask AddAsync(CartStorage cart)
         {
             await UpdateCartStorage(cart, CartStorageType.Add);
+        }
+
+        public async ValueTask UpdateAsync(CartStorage cart)
+        {
+            await UpdateCartStorage(cart, CartStorageType.Update);
+        }
+
+        public async ValueTask RemoveAsync(int productId)
+        {
+            await UpdateCartStorage(new CartStorage { ProductId = productId }, CartStorageType.Remove);
         }
 
         public async ValueTask<List<Cart>> GetAllAsync()
