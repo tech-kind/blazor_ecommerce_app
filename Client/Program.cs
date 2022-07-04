@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorECommerceApp.Client;
-using BlazorECommerceApp.Client.Services;
 using BlazorECommerceApp.Client.Util;
 using Blazored.LocalStorage;
-using BlazorECommerceApp.Client.State;
+using BlazorECommerceApp.Client.Extensions;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,10 +18,7 @@ builder.Services.AddHttpClient<PublicHttpClient>("BlazorECommerceApp.AnonymousAP
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorECommerceApp.ServerAPI"));
 
-builder.Services.AddScoped<IPublicProductService, PublicProductService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICartState, CartState>();
+builder.Services.AddServices();
 
 // Azure AD B2C‚ðŽg‚¤Ý’è‚ðs‚¤
 builder.Services.AddMsalAuthentication(options =>

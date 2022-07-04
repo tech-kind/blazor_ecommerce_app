@@ -45,6 +45,7 @@ namespace BlazorECommerceApp.Server.Services
                 LineItems = lineItems,
                 Mode = "payment",
                 SuccessUrl = $"https://localhost:5001/payment-success",
+                CancelUrl = $"https://localhost:5001/payment-cancel",
                 Metadata = new Dictionary<string, string>
                 {
                     ["userId"] = userId
