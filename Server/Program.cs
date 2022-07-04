@@ -20,6 +20,8 @@ builder.Services.AddRazorPages();
 // Swagger
 builder.Services.AddSwagger(builder.Configuration);
 
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

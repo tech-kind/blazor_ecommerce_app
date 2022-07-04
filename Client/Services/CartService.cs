@@ -10,6 +10,7 @@ namespace BlazorECommerceApp.Client.Services
         ValueTask UpdateAsync(CartStorage cartStorage);
         ValueTask AddAsync(CartStorage cartStorage);
         ValueTask RemoveAsync(int productId);
+        ValueTask RemoveAllAsync();
         ValueTask<List<Cart>> GetAllAsync();
     }
 
@@ -93,6 +94,12 @@ namespace BlazorECommerceApp.Client.Services
                 Quantity = storages.FirstOrDefault(s => s.ProductId == p.Id).Quantity,
                 Product = p
             }).ToList();
+        }
+
+        public async ValueTask RemoveAllAsync()
+        {
+            await _storageService.RemoveItemAsync(CART);
+            await _cartState.UpdateAsync();
         }
     }
 }

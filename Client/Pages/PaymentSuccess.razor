@@ -1,0 +1,15 @@
+﻿@page "/payment-success"
+@inject ICartService CartService
+@inject NavigationManager NavigationManager
+
+<PageTitle>購入処理中...</PageTitle>
+
+<p><em>Loading...</em></p>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await CartService.RemoveAllAsync();
+        NavigationManager.NavigateTo("payment-thanks", forceLoad: true);
+    }
+}
