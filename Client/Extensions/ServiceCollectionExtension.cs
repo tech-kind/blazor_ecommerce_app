@@ -13,6 +13,7 @@ namespace BlazorECommerceApp.Client.Extensions
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICartState, CartState>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             return services;
         }
