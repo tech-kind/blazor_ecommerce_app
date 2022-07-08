@@ -1,4 +1,5 @@
 ﻿using System;
+using BlazorECommerceApp.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
@@ -8,10 +9,12 @@ namespace BlazorECommerceApp.Server.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class StripeWebhookController : ControllerBase
     {
+        private readonly IOrderService _orderService;
         private readonly IConfiguration _configuration;
 
-        public StripeWebhookController(IConfiguration configuration)
+        public StripeWebhookController(IOrderService orderService, IConfiguration configuration)
         {
+            _orderService = orderService;
             _configuration = configuration;
         }
 
@@ -32,6 +35,7 @@ namespace BlazorECommerceApp.Server.Controllers
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
                     var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
+                    await _orderService.InsertAsync(session);
                 }
 
                 return Ok();
