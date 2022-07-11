@@ -1,0 +1,71 @@
+﻿@inject NavigationManager NavigationManager
+@inject IPublicProductService PublicProductService
+@inject IReviewService ReviewService
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthProvider
+
+<div class="row mb-3">
+    <img src="@_product.ImageUrl" style="height: 100px; width: 100px; object-fit: contain;" />
+    @_product.Title
+</div>
+
+<EditForm Model="@_review" OnValidSubmit="@(() => Mode == FormEditMode.New ? Post() : Put())">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+
+    <div class="form-group mb-3">
+        <label class="mb-2">総合評価</label>
+        <RatingStar Rating="@_review.Rating"></RatingStar>
+        <InputSelect class="form-control" Value="@_review.Rating" ValueExpression="@(() => _review.Rating)"
+            ValueChanged="@((int value) => OnQuantityChanged(value))" style="width: 50px;">
+            @foreach (int value in Enumerable.Range(1, 5))
+            {
+                <option value="@value">@value</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group mb-3" style="width: 70%;">
+        <label class="mb-2">レビュータイトル</label>
+        <InputText class="form-control" @bind-Value="@_review.Title"></InputText>
+    </div>
+    <div class="form-group mb-3">
+        <label class="mb-3">レビューを追加</label>
+        <InputTextArea class="form-control" @bind-Value="@_review.ReviewText" style="width: 70%;"></InputTextArea>
+    </div>
+    <button type="submit" class="btn btn-primary mb-3">投稿</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    [Parameter]
+    public FormEditMode Mode { get; set; }
+
+    private Review _review = new();
+
+    private Product _product = new();
+
+    private void OnQuantityChanged(int rating)
+    {
+        _review.Rating = rating;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _product = await PublicProductService.GetAsync(ProductId);
+        _review.ProductId = _product.Id;
+    }
+
+    private async Task Post()
+    {
+        await ReviewService.PostAsync(_review);
+        NavigationManager.NavigateTo($"/products/{_review.ProductId}");
+        await JSRuntime.InvokeVoidAsync("showInfoToast", "レビューを投稿しました。");
+    }
+
+    private async Task Put()
+    {
+        
+    }
+}

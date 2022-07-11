@@ -1,0 +1,83 @@
+﻿@inject IPublicReviewService PublicReviewService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject IReviewService ReviewService
+
+<div class="container mx-auto">
+    <div class="row mx-auto mb-3 col-md-6">
+        @if (_reviews is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else if (_reviews.Count == 0)
+        {
+            <p>まだカスタマーレビューはありません。</p>
+        }
+        else
+        {
+            @foreach (var review in _reviews)
+            {
+                <div class="row">
+                    <div class="col-2 mb-1 user-icon" style="width: 40px;">
+                        <span class="oi oi-person"></span>
+                    </div>
+                    <div class="col-9 d-flex align-items-left ml-3 mb-2">
+                        <strong>匿名ユーザー</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 mb-1">
+                        <RatingStar Rating="@review.Rating"></RatingStar>
+                    </div>
+                    <div class="col-9 d-flex align-items-left ml-3 mb-2">
+                        <strong>@review.Title</strong>
+                    </div>
+                </div>
+                <div class="text-muted fs-6 mb-2">
+                    @(review.CreateDate.ToString("yyyy年M月d日"))にレビュー済み
+                </div>
+                <div class="mb-2">
+                    @review.ReviewText
+                </div>
+                <div class="text-muted fs-6 mb-2">
+                    0人のお客様がこれが役に立ったと考えています
+                </div>
+                <button class="btn btn-light mb-5" style="width: 150px;">
+                    役に立った
+                </button>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    [Parameter]
+    public EventCallback<ReviewAverageCalculatedEventArgs> OnReviewAverageCalculated { get; set; }
+
+    private List<Review> _reviews = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _reviews = await PublicReviewService.FilterByProductIdAsync(ProductId);
+        await InvokeReviewAverageCalculatedEvent();
+    }
+
+    private async void DeleteReview(Review review)
+    {
+
+    }
+
+    private async ValueTask InvokeReviewAverageCalculatedEvent()
+    {
+        var args = new ReviewAverageCalculatedEventArgs
+        {
+            ReviewAverage = _reviews.Count == 0 ? 0 : (decimal)_reviews.Average(x => x.Rating),
+            ReviewCount = _reviews.Count()
+        };
+
+        await OnReviewAverageCalculated.InvokeAsync(args);
+    }
+}

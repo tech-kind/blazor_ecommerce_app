@@ -98,6 +98,7 @@ namespace BlazorECommerceApp.Server.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IIPaymentService, PaymentService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IReviewService, ReviewService>();
             return services;
         }
 
