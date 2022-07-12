@@ -1,4 +1,5 @@
 ﻿@inject IPublicReviewService PublicReviewService
+@inject AuthenticationStateProvider AuthProvider
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject IReviewService ReviewService
@@ -24,6 +25,20 @@
                     <div class="col-9 d-flex align-items-left ml-3 mb-2">
                         <strong>匿名ユーザー</strong>
                     </div>
+
+                    @if (_userId == review.UserId)
+                    {
+                        <div class="dropdown col-1">
+                            <a href="#" role="button" id="dropdownMenuLink"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="oi oi-ellipses"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" href=@($"/products/{ProductId}/review/{review.Id}/update")>編集する</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" @onclick="@(() => DeleteReview(review))" style="color: red;">削除する</a></li>
+                            </ul>
+                        </div>
+                    }
                 </div>
                 <div class="row">
                     <div class="col-3 mb-1">
@@ -57,17 +72,32 @@
     [Parameter]
     public EventCallback<ReviewAverageCalculatedEventArgs> OnReviewAverageCalculated { get; set; }
 
+    private Guid _userId;
     private List<Review> _reviews = new();
 
     protected override async Task OnInitializedAsync()
     {
         _reviews = await PublicReviewService.FilterByProductIdAsync(ProductId);
         await InvokeReviewAverageCalculatedEvent();
+
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        if (Guid.TryParse(authState.User.Claims.FirstOrDefault(x => x.Type == "oid")?.Value, out Guid value))
+        {
+            _userId = value;
+        }
     }
 
     private async void DeleteReview(Review review)
     {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "本当にレビューを削除しますか？");
+        if(confirmed)
+        {
+            await ReviewService.DeleteAsync(review.Id);
+            await JSRuntime.InvokeVoidAsync("showInfoToast", "レビューを削除しました。");
 
+            _reviews = await PublicReviewService.FilterByProductIdAsync(ProductId);
+            await InvokeReviewAverageCalculatedEvent();
+        }
     }
 
     private async ValueTask InvokeReviewAverageCalculatedEvent()

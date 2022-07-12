@@ -8,6 +8,7 @@ namespace BlazorECommerceApp.Client.Services
 {
     public interface IPublicReviewService
     {
+        ValueTask<Review> GetAsync(int id);
         ValueTask<List<Review>> FilterByProductIdAsync(int productId);
     }
 
@@ -26,6 +27,14 @@ namespace BlazorECommerceApp.Client.Services
             await response.HandleError();
 
             return await response.Content.ReadFromJsonAsync<List<Review>>();
+        }
+
+        public async ValueTask<Review> GetAsync(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/review/{id}");
+            await response.HandleError();
+
+            return await response.Content.ReadFromJsonAsync<Review>();
         }
     }
 }
